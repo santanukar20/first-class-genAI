@@ -1,182 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-      /* Base layout */
-      :root {
-        --bg-start: #1452d1;  /* deep blue */
-        --bg-end: #d12b7b;    /* pink */
-        --panel: 255, 255, 255; /* rgb base for glass */
-        --panel-alpha: 0.14;
-        --panel-border: 0.28;
-        --text: #ffffff;
-        --muted: #e6e6e6;
-        --accent: rgba(255,255,255,0.75);
-        --radius: 16px;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      html, body {
-        height: 100%;
-      }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to right, #1a4a8c, #6b46c1, #db2777);
+      position: relative;
+      overflow: hidden;
+    }
 
-      body {
-        margin: 0;
-        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        color: var(--text);
-        display: grid;
-        place-items: center;
-        background:
-          /* subtle wave lines using repeating radial gradients */
-          radial-gradient(1200px 600px at -10% 0%, rgba(255,255,255,0.06) 0 1px, transparent 1px 100%),
-          radial-gradient(1200px 600px at 110% 100%, rgba(255,255,255,0.06) 0 1px, transparent 1px 100%),
-          linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-        overflow: hidden;
-      }
+    /* Decorative abstract shapes */
+    .shapes {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
 
-      /* Login card */
-      .card {
-        width: min(92vw, 380px);
-        padding: 28px;
-        border-radius: var(--radius);
-        background: rgba(var(--panel), var(--panel-alpha));
-        box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(var(--panel), var(--panel-border));
-      }
+    .shape {
+      position: absolute;
+      border-radius: 50% 40% 60% 30%;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      opacity: 0.3;
+    }
 
-      h1 {
-        margin: 6px 0 18px 0;
-        font-size: 26px;
-        font-weight: 600;
-        text-align: center;
-        letter-spacing: 0.2px;
-      }
+    .shape1 {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 5%;
+      transform: rotate(45deg);
+    }
 
-      .field {
-        display: grid;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
+    .shape2 {
+      width: 200px;
+      height: 200px;
+      top: 50%;
+      left: 10%;
+      transform: rotate(-30deg);
+    }
 
-      label {
-        font-size: 13px;
-        color: var(--accent);
-      }
+    .shape3 {
+      width: 250px;
+      height: 250px;
+      top: 70%;
+      left: 2%;
+      transform: rotate(60deg);
+    }
 
-      input[type="text"],
-      input[type="password"] {
-        height: 42px;
-        padding: 0 12px;
-        color: #ffffff;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 10px;
-        outline: none;
-        transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-      }
+    /* Login card */
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+    }
 
-      input::placeholder { color: rgba(255,255,255,0.6); }
+    h1 {
+      color: #333;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: left;
+    }
 
-      input:focus {
-        border-color: rgba(255,255,255,0.6);
-        background: rgba(255,255,255,0.12);
-        box-shadow: 0 0 0 4px rgba(255,255,255,0.12);
-      }
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
 
-      .row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin: 8px 0 16px 0;
-        color: var(--accent);
-        font-size: 13px;
-      }
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #666;
+      z-index: 2;
+    }
 
-      .row a {
-        color: var(--accent);
-        text-decoration: none;
-      }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 25px;
+      font-size: 15px;
+      color: #333;
+      outline: none;
+      transition: background 0.3s ease;
+    }
 
-      .row a:hover { text-decoration: underline; }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      background: #e8e8e8;
+    }
 
-      .remember {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        user-select: none;
-      }
+    input::placeholder {
+      color: #999;
+    }
 
-      input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        accent-color: #ffffff;
-      }
+    .login-button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #8b5cf6, #ec4899);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-      button[type="submit"] {
-        width: 100%;
-        height: 44px;
-        border: 0;
-        border-radius: 999px;
-        color: #1b1b1b;
-        background: #ffffff;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-        cursor: pointer;
-        transition: transform 0.06s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.25);
-      }
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+    }
 
-      button[type="submit"]:hover { opacity: 0.95; }
-      button[type="submit"]:active { transform: translateY(1px); }
+    .login-button:active {
+      transform: translateY(0);
+    }
 
-      .byline {
-        margin-top: 14px;
-        font-size: 12px;
-        color: rgba(255,255,255,0.7);
-        text-align: center;
-      }
+    .forgot-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
 
-      /* Prefer reduced motion */
-      @media (prefers-reduced-motion: reduce) {
-        * { transition: none !important; }
-      }
-    </style>
-  </head>
-  <body>
-    <form class="card" onsubmit="event.preventDefault(); alert('Logged in!');">
-      <h1>Login</h1>
+    .forgot-link:hover {
+      color: #333;
+    }
 
-      <div class="field">
-        <label for="username">User Name</label>
-        <input id="username" name="username" type="text" placeholder="Enter your username" autocomplete="username" required />
+    .signup-link {
+      display: block;
+      text-align: right;
+      margin-top: 25px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .signup-link:hover {
+      color: #333;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 25px 0;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider::before {
+      margin-right: 10px;
+    }
+
+    .divider::after {
+      margin-left: 10px;
+    }
+
+    .google-signin-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    #google-signin-button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative shapes -->
+  <div class="shapes">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+  </div>
+
+  <!-- Login card -->
+  <div class="login-card">
+    <h1>User Login</h1>
+    
+    <form onsubmit="event.preventDefault(); alert('Login functionality would be implemented here!');">
+      <div class="input-group">
+        <svg class="input-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+        </svg>
+        <input type="text" placeholder="username" required>
       </div>
 
-      <div class="field">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+      <div class="input-group">
+        <svg class="input-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+        </svg>
+        <input type="password" placeholder="password" required>
       </div>
 
-      <div class="row">
-        <label class="remember">
-          <input type="checkbox" name="remember" />
-          <span>Remember me</span>
-        </label>
-        <a href="#" aria-label="Forgot password">Forgot?</a>
-      </div>
-
-      <button type="submit">Login</button>
-      <div class="byline">Demo page inspired by your mockup</div>
+      <button type="submit" class="login-button">Login</button>
     </form>
-  </body>
-  </html>
 
+    <div class="divider">or</div>
 
+    <div class="google-signin-container">
+      <div id="google-signin-button"></div>
+    </div>
+
+    <a href="#" class="forgot-link">Forgot password/username</a>
+    <a href="#" class="signup-link">Signup/create new account &gt;</a>
+  </div>
+
+  <script>
+    // Replace 'CLIENT_ID' with your actual Google Client ID from Google Cloud Console
+    const CLIENT_ID = 'CLIENT_ID';
+
+    // Initialize Google Identity Services
+    function initializeGoogleSignIn() {
+      if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.initialize({
+          client_id: CLIENT_ID,
+          callback: handleCredentialResponse
+        });
+
+        // Render the Google Sign-In button
+        google.accounts.id.renderButton(
+          document.getElementById('google-signin-button'),
+          {
+            theme: 'outline',
+            size: 'large',
+            width: '100%',
+            text: 'signin_with',
+            locale: 'en'
+          }
+        );
+
+        // Optional: Enable One Tap sign-in prompt
+        // google.accounts.id.prompt((notification) => {
+        //   if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        //     // Continue with normal sign-in flow
+        //   }
+        // });
+      } else {
+        // Retry if Google Identity Services hasn't loaded yet
+        setTimeout(initializeGoogleSignIn, 100);
+      }
+    }
+
+    // Handle the credential response from Google
+    function handleCredentialResponse(response) {
+      // Decode the JWT token to get user information
+      const responsePayload = parseJwt(response.credential);
+      
+      console.log('Google Sign-In successful!');
+      console.log('User ID: ' + responsePayload.sub);
+      console.log('User Name: ' + responsePayload.name);
+      console.log('User Email: ' + responsePayload.email);
+      console.log('Profile Picture: ' + responsePayload.picture);
+
+      // Here you would typically send the credential to your backend server
+      // for verification and user session creation
+      // Example:
+      // fetch('/api/auth/google', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ credential: response.credential })
+      // })
+      // .then(response => response.json())
+      // .then(data => {
+      //   // Handle successful authentication
+      //   window.location.href = '/dashboard';
+      // })
+      // .catch(error => {
+      //   console.error('Error:', error);
+      // });
+
+      // For now, just show an alert
+      alert('Google Sign-In successful!\n\nName: ' + responsePayload.name + '\nEmail: ' + responsePayload.email);
+    }
+
+    // Helper function to parse JWT token
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join('')
+        );
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error('Error parsing JWT:', e);
+        return null;
+      }
+    }
+
+    // Initialize Google Sign-In when the page loads
+    window.onload = function() {
+      initializeGoogleSignIn();
+    };
+  </script>
+</body>
+</html>
